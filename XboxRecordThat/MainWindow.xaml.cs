@@ -31,7 +31,7 @@ namespace XboxRecordThat
 
         private void button_Enable_Click(object sender, RoutedEventArgs e)
         {
-            speechRecognitionEngine.RecognizeAsync(RecognizeMode.Single);
+            speechRecognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
             activeIndicator.Fill = new SolidColorBrush(Colors.LimeGreen);
         }
         private void button_Disable_Click(object sender, RoutedEventArgs e)
@@ -41,8 +41,10 @@ namespace XboxRecordThat
         }
         private void MainWindow_Load(object sedner, EventArgs e)
         {
+            listBox.Items.Add("Xbox record that");
+            listBox.Items.Add("Clip that");
             Choices commands = new Choices();
-            commands.Add(new string[] { "Xbox record that" });
+            commands.Add(listBox.Items.OfType<string>().ToArray());
             GrammarBuilder gBuilder = new GrammarBuilder();
             gBuilder.Append(commands);
             Grammar grammar = new Grammar(gBuilder);
@@ -53,16 +55,38 @@ namespace XboxRecordThat
 
         private void SpeechRecognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            switch (e.Result.Text)
+            inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LWIN);
+            inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
+            inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_G);
+            inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_G);
+            inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
+            inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LWIN);
+        }
+
+        private void addPhrase(object sender, RoutedEventArgs e)
+        {
+            speechRecognitionEngine.UnloadAllGrammars();
+            listBox.Items.Add(textBox.Text);
+            Choices commands = new Choices();
+            commands.Add(listBox.Items.OfType<string>().ToArray());
+            GrammarBuilder gBuilder = new GrammarBuilder();
+            gBuilder.Append(commands);
+            Grammar grammar = new Grammar(gBuilder);
+            speechRecognitionEngine.LoadGrammarAsync(grammar);
+        }
+
+        private void removePhrase(object sender, RoutedEventArgs e)
+        {
+            listBox.Items.RemoveAt(listBox.Items.IndexOf(listBox.SelectedItem));
+            speechRecognitionEngine.UnloadAllGrammars();
+            if (listBox.Items.Count > 0)
             {
-                case "Xbox record that":
-                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LWIN);
-                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
-                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_G);
-                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LWIN);
-                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
-                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_G);
-                    break;
+                Choices commands = new Choices();
+                commands.Add(listBox.Items.OfType<string>().ToArray());
+                GrammarBuilder gBuilder = new GrammarBuilder();
+                gBuilder.Append(commands);
+                Grammar grammar = new Grammar(gBuilder);
+                speechRecognitionEngine.LoadGrammarAsync(grammar);
             }
         }
     }

@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XboxRecordThat"
         mc:Ignorable="d"
-        Title="Xbox, record that!" Height="163" Width="290" Loaded="MainWindow_Load">
+        Title="Xbox, record that!" Height="277" Width="398" Loaded="MainWindow_Load">
     <Grid Margin="0,0,0,0">
-        <Button x:Name="button1" Content="Enable" Margin="16,32,94,32" Click="button_Enable_Click" Height="20" Width="50"/>
-        <Button x:Name="button2" Content="Disable" Margin="94,0,16,0" Click="button_Disable_Click" Height="20" Width="50"/>
+        <Button x:Name="button1" Content="Enable" Margin="92,51,171,137" Click="button_Enable_Click" Height="20" Width="50"/>
+        <Button x:Name="button2" Content="Disable" Margin="170,51,93,137" Click="button_Disable_Click" Height="20" Width="50"/>
         <Label x:Name="label" Content="Xbox, record that!" Margin="0,20,0,0" Width="104" HorizontalAlignment="Center" Height="23" VerticalAlignment="Top" />
-        <Ellipse x:Name="activeIndicator" Height="14" Margin="73,35,71,35" Stroke="Black" Fill="Red" Width="16"/>
+        <Ellipse x:Name="activeIndicator" Height="14" Margin="148,54,149,140" Stroke="Black" Fill="Red" Width="16"/>
+        <ListBox x:Name="listBox" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="14,138,17,6"/>
+        <Button x:Name="button_add" Content="Add" HorizontalAlignment="Left" Margin="14,113,0,0" VerticalAlignment="Top" Width="35" Click="addPhrase"/>
+        <Button x:Name="button_delete" Content="Remove" HorizontalAlignment="Left" Margin="250,113,0,0" VerticalAlignment="Top" Click="removePhrase"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="54,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="191"/>
     </Grid>
 </Window>
