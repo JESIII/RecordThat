@@ -15,5 +15,7 @@
         <Button x:Name="button_add" Content="Add" HorizontalAlignment="Left" Margin="14,113,0,0" VerticalAlignment="Top" Width="35" Click="addPhrase"/>
         <Button x:Name="button_delete" Content="Remove" HorizontalAlignment="Left" Margin="250,113,0,0" VerticalAlignment="Top" Click="removePhrase"/>
         <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="54,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="191"/>
+        <ComboBox x:Name="overlayDropdown" HorizontalAlignment="Left" Margin="14,79,0,0" VerticalAlignment="Top" Width="90" Height="20" SelectionChanged="overlayDropdown_SelectionChanged"/>
+        <Label x:Name="label1" Content="Overlay" HorizontalAlignment="Left" Margin="36,56,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
