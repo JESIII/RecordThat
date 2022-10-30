@@ -1,2 +1,3 @@
 # XboxRecordThat
-![image](https://user-images.githubusercontent.com/17979117/194440605-41579577-32dd-41d9-9651-5907cd03a13c.png)
+Allows you to use your voice to trigger Gamebar or Shadowplay's clip saving function.
+![image](https://user-images.githubusercontent.com/17979117/198896305-61c3d9a0-0cb9-498b-bcc7-b455cf450aa2.png)
