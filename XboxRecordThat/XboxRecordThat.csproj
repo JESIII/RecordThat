@@ -4,7 +4,16 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>RecordThat.ico</ApplicationIcon>
+    <Copyright>John Scales 2022</Copyright>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JESIII/XboxRecordThat</RepositoryUrl>
+    <AssemblyVersion>1.0.2.1</AssemblyVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="RecordThat.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="InputSimulator" Version="1.0.4" />
