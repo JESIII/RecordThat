@@ -45,17 +45,14 @@ namespace XboxRecordThat
             GrammarBuilder gBuilder = new GrammarBuilder();
             gBuilder.Append(commands);
             Grammar grammar = new Grammar(gBuilder);
-            DictationGrammar dg = new DictationGrammar("grammar:dictation#pronunciation");
-            dg.Name = "pronun";
             speechRecognitionEngine.LoadGrammarAsync(grammar);
-            speechRecognitionEngine.LoadGrammarAsync(dg);
             speechRecognitionEngine.SetInputToDefaultAudioDevice();
             speechRecognitionEngine.SpeechRecognized += SpeechRecognitionEngine_SpeechRecognized;
         }
 
         private void SpeechRecognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            if (e.Result.Confidence > .70)
+            if (e.Result.Confidence > slider.Value/100)
             {
                 switch (overlayType)
                 {
@@ -87,10 +84,7 @@ namespace XboxRecordThat
             GrammarBuilder gBuilder = new GrammarBuilder();
             gBuilder.Append(commands);
             Grammar grammar = new Grammar(gBuilder);
-            DictationGrammar dg = new DictationGrammar("grammar:dictation#pronunciation");
-            dg.Name = "Random";
             speechRecognitionEngine.LoadGrammarAsync(grammar);
-            speechRecognitionEngine.LoadGrammarAsync(dg);
         }
 
         private void removePhrase(object sender, RoutedEventArgs e)
@@ -104,10 +98,7 @@ namespace XboxRecordThat
                 GrammarBuilder gBuilder = new GrammarBuilder();
                 gBuilder.Append(commands);
                 Grammar grammar = new Grammar(gBuilder);
-                DictationGrammar dg = new DictationGrammar("grammar:dictation#pronunciation");
-                dg.Name = "Random";
                 speechRecognitionEngine.LoadGrammarAsync(grammar);
-                speechRecognitionEngine.LoadGrammarAsync(dg);
             }
         }
 
