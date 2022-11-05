@@ -16,7 +16,8 @@ namespace XboxRecordThat
     {
         SpeechRecognitionEngine speechRecognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US"));
         InputSimulator inputSimulator = new InputSimulator();
-        string overlayType = "Gamebar";
+        List<string> commands = new List<string> { "Xbox record that", "Record that", "Clip that", "Clip it" };
+        List<string> overlayTypes = new List<string> { "Gamebar", "Shadowplay" };
         public MainWindow()
         {
             InitializeComponent();
@@ -34,27 +35,23 @@ namespace XboxRecordThat
         }
         private void MainWindow_Load(object sedner, EventArgs e)
         {
-            listBox.Items.Add("Xbox record that");
-            listBox.Items.Add("Record that");
-            listBox.Items.Add("Clip that");
-            listBox.Items.Add("Clip it");
-            overlayDropdown.ItemsSource = new List<string> { "Gamebar", "Shadowplay"};
+            
+            listBox.ItemsSource = commands;
+            overlayDropdown.ItemsSource = overlayTypes;
             overlayDropdown.SelectedIndex = 0;
-            Choices commands = new Choices();
-            commands.Add(listBox.Items.OfType<string>().ToArray());
-            GrammarBuilder gBuilder = new GrammarBuilder();
-            gBuilder.Append(commands);
-            Grammar grammar = new Grammar(gBuilder);
+            Grammar grammar = new Grammar(new GrammarBuilder(new Choices (commands.ToArray())));
+            grammar.Name = "customGrammar";
             speechRecognitionEngine.LoadGrammarAsync(grammar);
+            speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
             speechRecognitionEngine.SetInputToDefaultAudioDevice();
             speechRecognitionEngine.SpeechRecognized += SpeechRecognitionEngine_SpeechRecognized;
         }
 
         private void SpeechRecognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            if (e.Result.Confidence > slider.Value/100)
+            if (e.Result.Confidence > slider.Value/100 && e.Result.Grammar.Name == "customGrammar")
             {
-                switch (overlayType)
+                switch (overlayDropdown.SelectedItem.ToString())
                 {
                     case "Gamebar":
                         inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LWIN);
@@ -78,33 +75,24 @@ namespace XboxRecordThat
         private void addPhrase(object sender, RoutedEventArgs e)
         {
             speechRecognitionEngine.UnloadAllGrammars();
-            listBox.Items.Add(textBox.Text);
-            Choices commands = new Choices();
-            commands.Add(listBox.Items.OfType<string>().ToArray());
-            GrammarBuilder gBuilder = new GrammarBuilder();
-            gBuilder.Append(commands);
-            Grammar grammar = new Grammar(gBuilder);
+            commands.Add(textBox.Text);
+            Grammar grammar = new Grammar(new GrammarBuilder(new Choices(commands.ToArray())));
+            grammar.Name = "customGrammar";
             speechRecognitionEngine.LoadGrammarAsync(grammar);
+            speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
         }
 
         private void removePhrase(object sender, RoutedEventArgs e)
         {
-            listBox.Items.RemoveAt(listBox.Items.IndexOf(listBox.SelectedItem));
+            commands.RemoveAt(listBox.SelectedIndex);
             speechRecognitionEngine.UnloadAllGrammars();
-            if (listBox.Items.Count > 0)
+            if (commands.Count > 0)
             {
-                Choices commands = new Choices();
-                commands.Add(listBox.Items.OfType<string>().ToArray());
-                GrammarBuilder gBuilder = new GrammarBuilder();
-                gBuilder.Append(commands);
-                Grammar grammar = new Grammar(gBuilder);
+                Grammar grammar = new Grammar(new GrammarBuilder(new Choices(commands.ToArray())));
+                grammar.Name = "customGrammar";
                 speechRecognitionEngine.LoadGrammarAsync(grammar);
+                speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
             }
-        }
-
-        private void overlayDropdown_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            overlayType = overlayDropdown.SelectedItem.ToString();
         }
     }
 }
