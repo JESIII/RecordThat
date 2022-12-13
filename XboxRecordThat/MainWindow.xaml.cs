@@ -6,6 +6,7 @@ using System.Speech.Recognition;
 using WindowsInput;
 using System.Windows.Documents;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace XboxRecordThat
 {
@@ -16,11 +17,12 @@ namespace XboxRecordThat
     {
         SpeechRecognitionEngine speechRecognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US"));
         InputSimulator inputSimulator = new InputSimulator();
-        List<string> commands = new List<string> { "Xbox record that", "Record that", "Clip that", "Clip it" };
+        ObservableCollection<string> commands = new ObservableCollection<string> { "Xbox record that", "Record that", "Clip that", "Clip it" };
         List<string> overlayTypes = new List<string> { "Gamebar", "Shadowplay" };
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
         }
 
         private void button_Enable_Click(object sender, RoutedEventArgs e)
@@ -93,6 +95,7 @@ namespace XboxRecordThat
                 speechRecognitionEngine.LoadGrammarAsync(grammar);
                 speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
             }
+            
         }
     }
 }
