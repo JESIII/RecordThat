@@ -26,6 +26,7 @@ namespace XboxRecordThat
         private AudioConfig audioConfig;
         private SpeechConfig speechConfig;
         private InputSimulator inputSimulator = new InputSimulator();
+        private int selectedOverlay = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -47,6 +48,7 @@ namespace XboxRecordThat
             overlayTypes = new List<string> { "Gamebar", "Shadowplay" };
             overlayDropdown.ItemsSource = overlayTypes;
             overlayDropdown.SelectedIndex = 0;
+            selectedOverlay = 0;
             audioConfig = AudioConfig.FromDefaultMicrophoneInput();
 
             var subscriptionKey = "{yourkey}";
@@ -69,9 +71,14 @@ namespace XboxRecordThat
 
         void speechRecognizer_Recognized(object sender, SpeechRecognitionEventArgs e)
         {
-            switch (overlayDropdown.SelectedItem.ToString())
+            if (e.Result.Reason != ResultReason.RecognizedKeyword) return;
+            Dispatcher.Invoke((() =>
             {
-                case "Gamebar":
+                selectedOverlay = overlayDropdown.SelectedIndex;
+            }));
+            switch (selectedOverlay)
+            {
+                case 0:
                     inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LWIN);
                     inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
                     inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_G);
@@ -79,11 +86,8 @@ namespace XboxRecordThat
                     inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
                     inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LWIN);
                     break;
-                case "Shadowplay":
-                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
-                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.F10);
-                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.F10);
-                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
+                case 1:
+                    inputSimulator.Keyboard.KeyPress(WindowsInput.Native.VirtualKeyCode.PAUSE);
                     break;
             }
         }
