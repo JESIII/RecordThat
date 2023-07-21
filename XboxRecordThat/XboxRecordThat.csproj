@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>RecordThat.ico</ApplicationIcon>
     <Copyright>John Scales 2022</Copyright>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/JESIII/XboxRecordThat</RepositoryUrl>
     <AssemblyVersion>1.0.2.3</AssemblyVersion>
+    <UserSecretsId>421283f6-86f9-4aa0-8bf0-628b00f2b138</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="InputSimulator" Version="1.0.4" />
-    <PackageReference Include="System.Speech" Version="6.0.0" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.30.0" />
   </ItemGroup>
 
 </Project>

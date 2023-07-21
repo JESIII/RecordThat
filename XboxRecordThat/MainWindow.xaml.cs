@@ -2,11 +2,15 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Speech.Recognition;
 using WindowsInput;
 using System.Windows.Documents;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
+using System.Threading.Tasks;
+using SpeechRecognizer = Microsoft.CognitiveServices.Speech.SpeechRecognizer;
+using Microsoft.CognitiveServices.Speech.Intent;
 
 namespace XboxRecordThat
 {
@@ -15,10 +19,13 @@ namespace XboxRecordThat
     /// </summary>
     public partial class MainWindow : Window
     {
-        SpeechRecognitionEngine speechRecognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US"));
-        InputSimulator inputSimulator = new InputSimulator();
-        ObservableCollection<string> commands = new ObservableCollection<string> { "Xbox record that", "Record that", "Clip that", "Clip it" };
-        List<string> overlayTypes = new List<string> { "Gamebar", "Shadowplay" };
+        private List<string> overlayTypes;
+        private KeywordRecognitionModel keywordModel;
+        private KeywordRecognizer keywordRecognizer;
+        private SpeechRecognizer speechRecognizer;
+        private AudioConfig audioConfig;
+        private SpeechConfig speechConfig;
+        private InputSimulator inputSimulator = new InputSimulator();
         public MainWindow()
         {
             InitializeComponent();
@@ -27,75 +34,58 @@ namespace XboxRecordThat
 
         private void button_Enable_Click(object sender, RoutedEventArgs e)
         {
-            speechRecognitionEngine.RecognizeAsync(RecognizeMode.Multiple);
+            speechRecognizer.StartKeywordRecognitionAsync(keywordModel);
             activeIndicator.Fill = new SolidColorBrush(Colors.LimeGreen);
         }
         private void button_Disable_Click(object sender, RoutedEventArgs e)
         {
-            speechRecognitionEngine.RecognizeAsyncStop();
+            speechRecognizer.StopKeywordRecognitionAsync();
             activeIndicator.Fill = new SolidColorBrush(Colors.Red);
         }
-        private void MainWindow_Load(object sedner, EventArgs e)
+        private void MainWindow_Load(object sender, EventArgs e)
         {
-            
-            listBox.ItemsSource = commands;
+            overlayTypes = new List<string> { "Gamebar", "Shadowplay" };
             overlayDropdown.ItemsSource = overlayTypes;
             overlayDropdown.SelectedIndex = 0;
-            Grammar grammar = new Grammar(new GrammarBuilder(new Choices (commands.ToArray())));
-            grammar.Name = "customGrammar";
-            speechRecognitionEngine.LoadGrammarAsync(grammar);
-            speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
-            speechRecognitionEngine.SetInputToDefaultAudioDevice();
-            speechRecognitionEngine.SpeechRecognized += SpeechRecognitionEngine_SpeechRecognized;
+            audioConfig = AudioConfig.FromDefaultMicrophoneInput();
+
+            var subscriptionKey = "{yourkey}";
+            var region = "eastus";
+
+            speechConfig = SpeechConfig.FromSubscription(subscriptionKey, region);
+
+            // Set up the keyword recognition model
+            keywordModel = KeywordRecognitionModel.FromFile("C:\\Users\\John\\source\\repos\\JESIII\\XboxRecordThat\\XboxRecordThat\\SpeechModels\\74f5662d-aee4-4035-abe4-fbdb083bf999.table");
+
+            // Set up the keyword recognizer
+            keywordRecognizer = new KeywordRecognizer(audioConfig);
+
+            // Set up the continuous recognition
+            speechRecognizer = new SpeechRecognizer(speechConfig);
+
+            // Event handler for recognized speech
+            speechRecognizer.Recognized += speechRecognizer_Recognized;
         }
 
-        private void SpeechRecognitionEngine_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        void speechRecognizer_Recognized(object sender, SpeechRecognitionEventArgs e)
         {
-            if (e.Result.Confidence > slider.Value/100 && e.Result.Grammar.Name == "customGrammar")
+            switch (overlayDropdown.SelectedItem.ToString())
             {
-                switch (overlayDropdown.SelectedItem.ToString())
-                {
-                    case "Gamebar":
-                        inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LWIN);
-                        inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
-                        inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_G);
-                        inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_G);
-                        inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
-                        inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LWIN);
-                        break;
-                    case "Shadowplay":
-                        inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
-                        inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.F10);
-                        inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.F10);
-                        inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
-                        break;
-                }
-                
+                case "Gamebar":
+                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.LWIN);
+                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
+                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_G);
+                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_G);
+                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
+                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.LWIN);
+                    break;
+                case "Shadowplay":
+                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.MENU);
+                    inputSimulator.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.F10);
+                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.F10);
+                    inputSimulator.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.MENU);
+                    break;
             }
-        }
-
-        private void addPhrase(object sender, RoutedEventArgs e)
-        {
-            speechRecognitionEngine.UnloadAllGrammars();
-            commands.Add(textBox.Text);
-            Grammar grammar = new Grammar(new GrammarBuilder(new Choices(commands.ToArray())));
-            grammar.Name = "customGrammar";
-            speechRecognitionEngine.LoadGrammarAsync(grammar);
-            speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
-        }
-
-        private void removePhrase(object sender, RoutedEventArgs e)
-        {
-            commands.RemoveAt(listBox.SelectedIndex);
-            speechRecognitionEngine.UnloadAllGrammars();
-            if (commands.Count > 0)
-            {
-                Grammar grammar = new Grammar(new GrammarBuilder(new Choices(commands.ToArray())));
-                grammar.Name = "customGrammar";
-                speechRecognitionEngine.LoadGrammarAsync(grammar);
-                speechRecognitionEngine.LoadGrammarAsync(new DictationGrammar());
-            }
-            
         }
     }
 }

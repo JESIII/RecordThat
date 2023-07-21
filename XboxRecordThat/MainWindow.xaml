@@ -11,13 +11,13 @@
         <Button x:Name="button2" Content="Disable" Margin="170,51,93,137" Click="button_Disable_Click" Height="20" Width="50"/>
         <Label x:Name="label" Content="Xbox, record that!" Margin="0,20,0,0" Width="104" HorizontalAlignment="Center" Height="23" VerticalAlignment="Top" />
         <Ellipse x:Name="activeIndicator" Height="14" Margin="148,54,149,140" Stroke="Black" Fill="Red" Width="16"/>
-        <ListBox x:Name="listBox" ItemsSource="{Binding commands, Mode=OneWay}" Margin="14,138,17,6"/>
+        <!--<ListBox x:Name="listBox" ItemsSource="{Binding commands, Mode=OneWay}" Margin="14,138,17,6"/>
         <Button x:Name="button_add" Content="Add" HorizontalAlignment="Left" Margin="14,113,0,0" VerticalAlignment="Top" Width="35" Click="addPhrase"/>
         <Button x:Name="button_delete" Content="Remove" HorizontalAlignment="Left" Margin="250,113,0,0" VerticalAlignment="Top" Click="removePhrase"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="54,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="191"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="54,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="191"/>-->
         <ComboBox x:Name="overlayDropdown" HorizontalAlignment="Left" Margin="14,79,0,0" VerticalAlignment="Top" Width="90" Height="20"/>
-        <Label x:Name="label1" Content="Overlay" HorizontalAlignment="Left" Margin="36,56,0,0" VerticalAlignment="Top"/>
+        <!--<Label x:Name="label1" Content="Overlay" HorizontalAlignment="Left" Margin="36,56,0,0" VerticalAlignment="Top"/>
         <Slider x:Name="slider" HorizontalAlignment="Left" Margin="278,79,0,0" VerticalAlignment="Top" Width="103" Maximum="100" Value="80" AutoToolTipPlacement="BottomRight" SmallChange="1" LargeChange="10"/>
-        <Label x:Name="label2" Content="Threshold" HorizontalAlignment="Left" Margin="298,56,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2" Content="Threshold" HorizontalAlignment="Left" Margin="298,56,0,0" VerticalAlignment="Top"/>-->
     </Grid>
 </Window>
